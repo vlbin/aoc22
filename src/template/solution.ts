@@ -1,9 +1,10 @@
-import { readFile } from "../utils/fileReader";
-
-const input = readFile();
+import { readFile } from "fs/promises";
+import { timed } from "../utils/timed";
 
 /* PART 1 */
-const one = () => {};
+const one = (data: string) => {};
+readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
-const two = () => {};
+const two = (data: string) => {};
+readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
