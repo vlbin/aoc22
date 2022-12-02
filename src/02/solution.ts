@@ -18,20 +18,17 @@ const decis = (o: string, m: string) =>
   me[(opp.indexOf(o) + me.indexOf(m) + 2) % 3];
 
 /* PART 1 */
-const one = (data: string) => {
-  const rounds = parse(data);
-
-  return rounds.map((r) => score(r.opp, r.me)).reduce((p, c) => p + c, 0);
-};
+const one = (data: string) =>
+  parse(data)
+    .map((r) => score(r.opp, r.me))
+    .reduce((p, c) => p + c, 0);
 
 readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
-const two = (data: string) => {
-  const rounds = parse(data);
-
-  return rounds
+const two = (data: string) =>
+  parse(data)
     .map((r) => score(r.opp, decis(r.opp, r.me)))
     .reduce((p, c) => p + c, 0);
-};
+
 readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
