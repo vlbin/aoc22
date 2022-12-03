@@ -1,4 +1,5 @@
 import { readFile } from "fs/promises";
+import { timed } from "../utils/timed";
 
 const prio = (x: string) => {
   const ret = x.charCodeAt(0) - 96 + (x.match(/^[A-Z]/) ? 58 : 0);
@@ -18,8 +19,8 @@ const one = (data: string) => {
     })
     .reduce((p, c) => p + c, 0);
 };
-readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
+readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
 const two = (data: string) => {
@@ -41,5 +42,5 @@ const two = (data: string) => {
 
     .reduce((p, c) => p + prio(c), 0);
 };
-readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
+readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
