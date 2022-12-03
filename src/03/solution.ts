@@ -1,10 +1,7 @@
 import { readFile } from "fs/promises";
 import { timed } from "../utils/timed";
 
-const prio = (x: string) => {
-  const ret = x.charCodeAt(0) - 96 + (x.match(/^[A-Z]/) ? 58 : 0);
-  return ret;
-};
+const prio = (x: string) => x.charCodeAt(0) - 96 + (x.match(/^[A-Z]/) ? 58 : 0);
 
 /* PART 1 */
 const one = (data: string) => {
