@@ -9,12 +9,11 @@ const one = (data: string) => {
     .split("\n")
     .map((comp) => {
       const l = comp.length;
-      const fst = comp.slice(0, l / 2 + 1).split("");
+      const fst = comp.slice(0, l / 2).split("");
       const last = comp.slice(l / 2, l).split("");
-      const x = fst.find((x) => last.includes(x))!;
-      return prio(x);
+      return fst.find((x) => last.includes(x))!;
     })
-    .reduce((p, c) => p + c, 0);
+    .reduce((p, c) => p + prio(c), 0);
 };
 //readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
 readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
