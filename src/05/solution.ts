@@ -40,12 +40,10 @@ const one = (data: string) => {
   const crates = parseCrates(data);
   const instrs = parseInstr(data);
 
-  instrs.forEach((instr, i) => {
-    Array(instr.n)
-      .fill(0)
-      .forEach(() => {
-        crates[instr.to - 1].unshift(crates[instr.from - 1].shift()!);
-      });
+  instrs.forEach((instr) => {
+    crates[instr.to - 1].unshift(
+      ...crates[instr.from - 1].splice(0, instr.n).reverse()
+    );
   });
   return crates.map((x) => x[0]).join("");
 };
