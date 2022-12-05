@@ -27,12 +27,7 @@ const parseInstr = (input: string) => {
         .split(" ")
         .filter((_, i) => i % 2 === 1)
         .map(Number)
-    )
-    .map(([n, from, to]) => ({
-      n,
-      from,
-      to,
-    }));
+    );
 };
 
 /* PART 1 */
@@ -40,10 +35,8 @@ const one = (data: string) => {
   const crates = parseCrates(data);
   const instrs = parseInstr(data);
 
-  instrs.forEach((instr) => {
-    crates[instr.to - 1].unshift(
-      ...crates[instr.from - 1].splice(0, instr.n).reverse()
-    );
+  instrs.forEach(([n, from, to]) => {
+    crates[to - 1].unshift(...crates[from - 1].splice(0, n).reverse());
   });
   return crates.map((x) => x[0]).join("");
 };
@@ -56,8 +49,8 @@ const two = (data: string) => {
   const crates = parseCrates(data);
   const instrs = parseInstr(data);
 
-  instrs.forEach((instr) => {
-    crates[instr.to - 1].unshift(...crates[instr.from - 1].splice(0, instr.n));
+  instrs.forEach(([n, from, to]) => {
+    crates[to - 1].unshift(...crates[from - 1].splice(0, n));
   });
   return crates.map((x) => x[0]).join("");
 };
