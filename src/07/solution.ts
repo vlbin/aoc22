@@ -8,28 +8,21 @@ interface Node {
   parent?: Node;
 }
 
-const goToTop = (n: Node): Node => {
-  if (n.parent) return goToTop(n.parent);
+const root = (n: Node): Node => {
+  if (n.parent) return root(n.parent);
   return n;
-};
-
-const size = (n: Node): number => {
-  return n.size + n.children.reduce((p, c) => (p += size(c)), 0);
 };
 
 const getSizeBelow = (n: Node) => {
   let tot = 0;
 
-  const traverse = (n: Node): number => {
-    const v = n.size + n.children.reduce((p, c) => (p += traverse(c)), 0);
-
-    if (v <= 100000) {
-      tot += v;
+  const traverse = (n: Node) => {
+    if (n.size <= 100000) {
+      tot += n.size;
     }
 
-    return v;
+    n.children.forEach(traverse);
   };
-
   traverse(n);
   return tot;
 };
@@ -37,18 +30,23 @@ const getSizeBelow = (n: Node) => {
 const findSmallestDeletable = (n: Node, thres: number) => {
   let smallest = 70000000;
 
-  const traverse = (n: Node): number => {
-    const v = n.size + n.children.reduce((p, c) => (p += traverse(c)), 0);
-
-    if (v >= thres && v <= smallest) {
-      smallest = v;
+  const traverse = (n: Node) => {
+    if (n.size >= thres && n.size <= smallest) {
+      smallest = n.size;
     }
 
-    return v;
+    n.children.forEach(traverse);
   };
 
   traverse(n);
   return smallest;
+};
+
+const updateSizes = (diff: number, n?: Node) => {
+  if (n) {
+    n.size += diff;
+    updateSizes(diff, n.parent);
+  }
 };
 
 const parse = (data: string) => {
@@ -56,13 +54,13 @@ const parse = (data: string) => {
 
   const tree = lines
     .filter((x) => x != "$ ls")
-    .map((l) => l.replace("$ cd ", ""))
+    .map((l) => (l.startsWith("$ cd") ? l.replace("$ cd ", "") : l))
     .slice(1)
     .reduce(
       (p, c) => {
         if (c.startsWith("dir")) {
           p.children.push({
-            name: c.split(" ")[1],
+            name: c.substring(4),
             size: 0,
             children: [],
             parent: p,
@@ -70,8 +68,9 @@ const parse = (data: string) => {
         } else if (c.startsWith("..")) {
           return p.parent!;
         } else if (c.match(/^\d/)) {
-          const size = Number(c.split(" ")[0]);
+          const size = parseInt(c, 10);
           p.size += size;
+          updateSizes(size, p.parent);
         } else {
           return p.children.find((x) => x.name === c)!;
         }
@@ -84,20 +83,21 @@ const parse = (data: string) => {
 };
 
 /* PART 1 */
-const one = (data: string) => getSizeBelow(goToTop(parse(data)));
-readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
+const one = (data: string) => getSizeBelow(root(parse(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
+readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
 const two = (data: string) => {
   const tree = parse(data);
   const total = 70000000;
   const needed = 30000000;
-  const free = total - size(goToTop(tree));
+  const _root = root(tree);
+  const free = total - _root.size;
 
   const thres = needed - free;
 
-  return findSmallestDeletable(goToTop(tree), thres);
+  return findSmallestDeletable(_root, thres);
 };
-readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
+readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
