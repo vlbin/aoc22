@@ -13,36 +13,42 @@ const goToTop = (n: Node): Node => {
   return n;
 };
 
-const sum = (n: Node, acc: number): number => {
-  const sz = sumNode(n);
-
-  if (sz <= 100000) acc += sz;
-  for (let c of n.children) {
-    return sum(c, acc);
-  }
-  return acc;
+const size = (n: Node): number => {
+  return n.size + n.children.reduce((p, c) => (p += size(c)), 0);
 };
 
-let tot = 0;
+const getSizeBelow = (n: Node) => {
+  let tot = 0;
 
-const sumNode = (n: Node): number => {
-  const v = n.size + n.children.reduce((p, c) => (p += sumNode(c)), 0);
+  const traverse = (n: Node): number => {
+    const v = n.size + n.children.reduce((p, c) => (p += traverse(c)), 0);
 
-  if (v <= 100000) tot += v;
+    if (v <= 100000) {
+      tot += v;
+    }
 
-  return v;
+    return v;
+  };
+
+  traverse(n);
+  return tot;
 };
 
-let smallest = 70000000;
+const findSmallestDeletable = (n: Node, thres: number) => {
+  let smallest = 70000000;
 
-const sumNode2 = (n: Node, thres: number): number => {
-  const v = n.size + n.children.reduce((p, c) => (p += sumNode2(c, thres)), 0);
+  const traverse = (n: Node): number => {
+    const v = n.size + n.children.reduce((p, c) => (p += traverse(c)), 0);
 
-  if (v >= thres && v <= smallest) {
-    smallest = v;
-  }
+    if (v >= thres && v <= smallest) {
+      smallest = v;
+    }
 
-  return v;
+    return v;
+  };
+
+  traverse(n);
+  return smallest;
 };
 
 const parse = (data: string) => {
@@ -78,27 +84,20 @@ const parse = (data: string) => {
 };
 
 /* PART 1 */
-const one = (data: string) => {
-  const tree = parse(data);
-
-  return sumNode(goToTop(tree));
-};
-readFile("input.txt", "utf-8").then((data) => {
-  console.log(one(data));
-  console.log(tot);
-});
+const one = (data: string) => getSizeBelow(goToTop(parse(data)));
+readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
 //readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
 const two = (data: string) => {
+  const tree = parse(data);
   const total = 70000000;
   const needed = 30000000;
-  const tree = parse(data);
-  const free = total - sumNode(goToTop(tree));
+  const free = total - size(goToTop(tree));
+
   const thres = needed - free;
 
-  sumNode2(goToTop(tree), thres);
-  console.log("smallest: ", smallest);
+  return findSmallestDeletable(goToTop(tree), thres);
 };
 readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
 //readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
