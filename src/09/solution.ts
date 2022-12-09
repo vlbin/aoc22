@@ -67,16 +67,16 @@ const two = (data: string) => {
 
     Array(steps)
       .fill(0)
-      .forEach((_, moveIdx) => {
-        rope.forEach((knot, i) => {
+      .forEach((_) => {
+        rope.forEach((_, i) => {
           if (i === 0) {
             rope[i] = calcPos(rope[i], dir);
           } else {
-            if (!touching(rope[i - 1], knot)) {
-              rope[i] = getTailPos(rope[i - 1], knot);
-              if (i === rope.length - 1) {
-                tailLocations = visit(tailLocations, knot);
-              }
+            if (!touching(rope[i - 1], rope[i])) {
+              rope[i] = getTailPos(rope[i - 1], rope[i]);
+            }
+            if (i === rope.length - 1) {
+              tailLocations = visit(tailLocations, rope[i]);
             }
           }
         });
