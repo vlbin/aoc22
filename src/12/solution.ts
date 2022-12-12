@@ -50,9 +50,13 @@ class SortedSet<T> {
     }
   }
 
-  pop() {
+  has(e: T) {
+    return this.list.findIndex((x) => x.elem === e) > -1;
+  }
+
+  pop(): [T, number] {
     const v = this.list.splice(0, 1);
-    return v[0].item();
+    return [v[0].elem, v[0].prio];
   }
 
   size() {
@@ -118,29 +122,34 @@ const a_star = (
 ) => {
   const openSet = new SortedSet<string>();
 
-  openSet.add(start, h(start, goal, translateMap));
+  openSet.add(start, 0);
 
-  const gScore = new Map<string, number>();
-  gScore.set(start, 0);
+  const costSoFar = new Map<string, number>();
+  costSoFar.set(start, 0);
 
-  const fScore = new Map<string, number>();
-  fScore.set(start, h(start, goal, translateMap));
+  const cameFrom = new Map<string, string>();
 
-  while (openSet.size) {
-    const ck = openSet.pop();
+  while (openSet.size()) {
+    const [ck, cp] = openSet.pop();
 
     if (ck === goal) {
-      return gScore.get(goal);
+      return costSoFar.get(goal)!;
     }
 
-    for (let neighbor of neighbors(ck, priodGrid, translateMap)) {
-      let tentative = gScore.get(ck)! + 1;
-      gScore.set(neighbor, tentative);
-      fScore.set(neighbor, tentative + h(neighbor, goal, translateMap));
-      openSet.add(neighbor, fScore.get(neighbor)!);
+    const children = neighbors(ck, priodGrid, translateMap);
+    for (let child of children) {
+      let cost = costSoFar.get(ck)! + 1;
+
+      if (!costSoFar.has(child) || cost < costSoFar.get(child)!) {
+        costSoFar.set(child, cost);
+        let prior = cost + h(child, goal, translateMap);
+
+        openSet.add(child, prior);
+        cameFrom.set(child, ck);
+      }
     }
   }
-  throw Error("no path");
+  return 10000000;
 };
 
 const up = (cur: number[]) => [cur[0] - 1, cur[1]];
@@ -205,9 +214,10 @@ const two = (data: string) => {
 
     let lowest = 100000;
     let starts: string[] = [];
+
     grid.forEach((row, i) => {
       row.forEach((cell, j) => {
-        if (j === 0) {
+        if (cell === "a") {
           const start = [i, j];
 
           const x = a_star(JSON.stringify(start), es, priodGrid, translateMap);
@@ -227,5 +237,5 @@ const two = (data: string) => {
     console.log(e);
   }
 };
-//readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
+readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
 //readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
