@@ -1,8 +1,6 @@
 import { readFile } from "fs/promises";
 import { timed } from "../utils/timed";
 
-const runOp = (operation: string, x: number, cycles: number) => {};
-
 /* PART 1 */
 const one = (data: string) => {
   let cycles = 0;
@@ -26,8 +24,8 @@ const one = (data: string) => {
   });
   return tot;
 };
-readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
+readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
 const two = (data: string) => {
@@ -66,5 +64,5 @@ const two = (data: string) => {
   });
   return matrix.map((l) => l.join("")).join("\n");
 };
-readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
+readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));

@@ -11,7 +11,7 @@ const visit = (visited: number[][], [x, y]: number[]) => {
 };
 
 const calcPos = ([x, y]: number[], dir: Direction) => {
-  const dirs = {
+  const dirs: Record<Direction, number[]> = {
     U: [0, 1],
     D: [0, -1],
     L: [-1, 0],
@@ -33,8 +33,11 @@ const touching = ([headX, headY]: number[], [tailX, tailY]: number[]) => {
 /* PART 1 */
 const one = (data: string) => {
   const instrs = data.split("\n");
-  let headpos = [0, 0];
-  let tailpos = [0, 0];
+  let [headpos, tailpos] = [
+    [0, 0],
+    [0, 0],
+  ];
+
   let tailLocations: number[][] = [[0, 0]];
   instrs.forEach((instr) => {
     const steps = Number(instr.split(" ")[1]);
@@ -42,7 +45,7 @@ const one = (data: string) => {
 
     Array(steps)
       .fill(0)
-      .forEach((_, moveIdx) => {
+      .forEach(() => {
         headpos = calcPos(headpos, dir);
         if (!touching(headpos, tailpos)) {
           tailpos = getTailPos(headpos, tailpos);
@@ -53,8 +56,8 @@ const one = (data: string) => {
 
   return tailLocations.length;
 };
-readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
-//readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(one(data)));
+readFile("input.txt", "utf-8").then((data) => timed(1, () => one(data)));
 
 /* PART 2 */
 const two = (data: string) => {
@@ -85,7 +88,5 @@ const two = (data: string) => {
 
   return tailLocations.length;
 };
-readFile("input.txt", "utf-8").then((data) =>
-  console.log("part2: ", two(data))
-);
-//readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));
+//readFile("input.txt", "utf-8").then((data) => console.log(two(data)));
+readFile("input.txt", "utf-8").then((data) => timed(2, () => two(data)));

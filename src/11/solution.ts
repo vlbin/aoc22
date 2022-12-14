@@ -13,12 +13,13 @@ interface Monkey {
 const turn = (
   monkey: Monkey,
   monkeys: Monkey[],
-  sanityOp: (a: number) => number,
-  roundIdx: number
+  sanityOp: (a: number) => number
 ) => {
   let item = monkey.items.shift();
   while (item !== undefined) {
-    const wl = monkey.operation(item % monkeys.reduce((p, c) => p * c.mod, 1));
+    const wl = sanityOp(
+      monkey.operation(item % monkeys.reduce((p, c) => p * c.mod, 1))
+    );
 
     const nextMonkey = monkey.test(wl);
 
@@ -37,9 +38,8 @@ const round = (
     .fill(0)
     .forEach((_, i) => {
       monkeys.forEach((monkey) => {
-        turn(monkey, monkeys, sanityOp, i + 1);
+        turn(monkey, monkeys, sanityOp);
       });
-      console.log(monkeys.map((x) => x.inspected));
     });
   return monkeys;
 };
@@ -99,7 +99,7 @@ const one = (data: string) => {
 const two = (data: string) => {
   return [
     99 * 103,
-    round(parse(data), (a) => Math.floor(a), 10000)
+    round(parse(data), (a) => a, 10000)
       .map((x) => x.inspected)
       .sort((a, b) => b - a)
       .slice(0, 2)
